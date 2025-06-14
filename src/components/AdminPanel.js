@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './AdminPanel.css';
 import { 
   Plus, 
   Edit3, 
