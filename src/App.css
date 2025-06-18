@@ -1,4 +1,4 @@
-/* Reset y base */
+/* Optimización de rendimiento: uso de contain y will-change para mejor performance */
 * {
   margin: 0;
   padding: 0;
@@ -20,9 +20,12 @@ body {
     linear-gradient(135deg, #0a0b1e 0%, #1a1b2e 50%, #2a1b3e 100%);
   background-size: 50px 50px, 50px 50px, 100% 100%;
   background-attachment: fixed;
+  
+  /* Optimización de rendimiento */
+  contain: layout style paint;
 }
 
-/* Optimizaciones de rendimiento */
+/* Optimizaciones de rendimiento con will-change */
 .will-change-transform {
   will-change: transform;
 }
@@ -31,9 +34,25 @@ body {
   will-change: auto;
 }
 
+/* Optimización para animaciones - usar transform3d para hardware acceleration */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  transform: translate3d(0, 0, 0); /* Forzar hardware acceleration */
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+  transform: translate3d(0, 0, 0);
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+  transform: translate3d(0, 0, 0);
+}
+
 /* Reduce motion para usuarios que prefieren menos animaciones */
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -47,7 +66,7 @@ body {
   }
 }
 
-/* Colores personalizados futuristas */
+/* Colores personalizados futuristas - Variables CSS optimizadas */
 :root {
   --primary-purple: #8B5FBF;
   --secondary-blue: #6366F1;
@@ -73,13 +92,15 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  /* Optimización: contain para gradientes */
+  contain: layout;
 }
 
 .cyber-gradient {
   background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-blue) 50%, var(--accent-cyan) 100%);
 }
 
-/* Glass card effect mejorado con efectos cyber */
+/* Glass card effect optimizado con contain */
 .glass-card {
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
@@ -89,6 +110,7 @@ body {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
+  contain: layout style paint;
 }
 
 .glass-card::before {
@@ -103,7 +125,7 @@ body {
 
 .glass-card:hover {
   border-color: rgba(139, 95, 191, 0.6);
-  transform: translateY(-4px);
+  transform: translateY(-4px) translate3d(0, 0, 0);
   box-shadow: var(--cyber-shadow);
 }
 
@@ -111,67 +133,12 @@ body {
   background: linear-gradient(90deg, transparent, rgba(139, 95, 191, 0.8), transparent);
 }
 
-/* Efectos de partículas y elementos flotantes */
-.floating-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(1px);
-  animation: float 6s ease-in-out infinite;
-}
-
-.floating-orb:nth-child(1) {
-  width: 100px;
-  height: 100px;
-  background: radial-gradient(circle, rgba(139, 95, 191, 0.3), transparent);
-  top: 20%;
-  left: 10%;
-  animation-delay: 0s;
-}
-
-.floating-orb:nth-child(2) {
-  width: 150px;
-  height: 150px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.2), transparent);
-  top: 60%;
-  right: 15%;
-  animation-delay: 2s;
-}
-
-.floating-orb:nth-child(3) {
-  width: 80px;
-  height: 80px;
-  background: radial-gradient(circle, rgba(0, 212, 255, 0.25), transparent);
-  bottom: 30%;
-  left: 60%;
-  animation-delay: 4s;
-}
-
-/* Hero illustration background mejorado */
-.hero-illustration {
-  background: linear-gradient(135deg, rgba(139, 95, 191, 0.1), rgba(99, 102, 241, 0.1));
-  border: 1px solid var(--border-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-illustration::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: conic-gradient(from 0deg, transparent, rgba(139, 95, 191, 0.1), transparent);
-  animation: rotate 10s linear infinite;
-}
-
-/* Navegación con efectos cyber */
+/* Navegación con efectos cyber optimizados */
 nav {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   position: relative;
+  contain: layout style;
 }
 
 nav::after {
@@ -184,7 +151,7 @@ nav::after {
   background: linear-gradient(90deg, transparent, rgba(139, 95, 191, 0.3), transparent);
 }
 
-/* Botones con efectos futuristas */
+/* Botones con efectos futuristas optimizados */
 .cyber-button {
   position: relative;
   background: linear-gradient(135deg, var(--primary-purple), var(--secondary-blue));
@@ -197,6 +164,9 @@ nav::after {
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
   overflow: hidden;
+  contain: layout style;
+  /* Hardware acceleration */
+  transform: translate3d(0, 0, 0);
 }
 
 .cyber-button::before {
@@ -215,13 +185,14 @@ nav::after {
 }
 
 .cyber-button:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) translate3d(0, 0, 0);
   box-shadow: 0 10px 25px rgba(139, 95, 191, 0.3);
 }
 
-/* Efectos de texto brillante */
+/* Efectos de texto brillante optimizados */
 .glow-text {
   text-shadow: 0 0 10px rgba(139, 95, 191, 0.5);
+  contain: layout;
 }
 
 .cyber-text {
@@ -244,22 +215,22 @@ nav::after {
   width: 100%;
 }
 
-/* Animaciones futuristas y de scroll */
+/* Optimización de animaciones con transform3d */
 @keyframes float {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translateY(0px) rotate(0deg) translate3d(0, 0, 0);
   }
   50% {
-    transform: translateY(-20px) rotate(5deg);
+    transform: translateY(-20px) rotate(5deg) translate3d(0, 0, 0);
   }
 }
 
 @keyframes rotate {
   from {
-    transform: rotate(0deg);
+    transform: rotate(0deg) translate3d(0, 0, 0);
   }
   to {
-    transform: rotate(360deg);
+    transform: rotate(360deg) translate3d(0, 0, 0);
   }
 }
 
@@ -272,120 +243,125 @@ nav::after {
   }
 }
 
-@keyframes pulse-glow {
+@keyframes pulse {
   0%, 100% {
-    opacity: 0.5;
-    transform: scale(1);
+    opacity: 1;
+    transform: scale(1) translate3d(0, 0, 0);
   }
   50% {
-    opacity: 1;
-    transform: scale(1.05);
+    opacity: 0.5;
+    transform: scale(1.05) translate3d(0, 0, 0);
   }
 }
 
-@keyframes cyber-scan {
-  0% {
-    transform: translateX(-100%);
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%) translate3d(0, 0, 0);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
   }
-  100% {
-    transform: translateX(100vw);
+  50% {
+    transform: translateY(0) translate3d(0, 0, 0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg) translate3d(0, 0, 0);
+  }
+  to {
+    transform: rotate(360deg) translate3d(0, 0, 0);
   }
 }
 
 @keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(30px) translate3d(0, 0, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) translate3d(0, 0, 0);
   }
 }
 
 @keyframes slide-up {
   from {
     opacity: 0;
-    transform: translateY(50px);
+    transform: translateY(50px) translate3d(0, 0, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) translate3d(0, 0, 0);
   }
 }
 
 @keyframes slide-in-left {
   from {
     opacity: 0;
-    transform: translateX(-50px);
+    transform: translateX(-50px) translate3d(0, 0, 0);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) translate3d(0, 0, 0);
   }
 }
 
 @keyframes slide-in-right {
   from {
     opacity: 0;
-    transform: translateX(50px);
+    transform: translateX(50px) translate3d(0, 0, 0);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) translate3d(0, 0, 0);
   }
 }
 
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Animaciones activadas por scroll */
+/* Animaciones activadas por scroll - Optimizadas */
 .scroll-animate {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(30px) translate3d(0, 0, 0);
   transition: all 0.6s ease-out;
+  contain: layout;
 }
 
 .scroll-animate.animate {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) translate3d(0, 0, 0);
 }
 
 .scroll-animate-left {
   opacity: 0;
-  transform: translateX(-50px);
+  transform: translateX(-50px) translate3d(0, 0, 0);
   transition: all 0.8s ease-out;
+  contain: layout;
 }
 
 .scroll-animate-left.animate {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateX(0) translate3d(0, 0, 0);
 }
 
 .scroll-animate-right {
   opacity: 0;
-  transform: translateX(50px);
+  transform: translateX(50px) translate3d(0, 0, 0);
   transition: all 0.8s ease-out;
+  contain: layout;
 }
 
 .scroll-animate-right.animate {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateX(0) translate3d(0, 0, 0);
 }
 
-/* Efectos de hover para cards */
+/* Efectos de hover para cards optimizados */
 .project-card {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
+  contain: layout style paint;
+  transform: translate3d(0, 0, 0); /* Hardware acceleration */
 }
 
 .project-card::before {
@@ -404,11 +380,74 @@ nav::after {
 }
 
 .project-card:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-8px) scale(1.02) translate3d(0, 0, 0);
   box-shadow: 0 20px 40px rgba(139, 95, 191, 0.2);
 }
 
-/* Scrollbar personalizado con tema cyber */
+/* Efectos para las redes sociales optimizados */
+.social-icon {
+  position: relative;
+  transition: all 0.3s ease;
+  contain: layout;
+  transform: translate3d(0, 0, 0);
+}
+
+.social-icon::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(139, 95, 191, 0.3), transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) translate3d(0, 0, 0);
+  transition: all 0.3s ease;
+  z-index: -1;
+}
+
+.social-icon:hover::before {
+  width: 150%;
+  height: 150%;
+}
+
+.social-icon:hover {
+  transform: translateY(-2px) scale(1.1) translate3d(0, 0, 0);
+  box-shadow: 0 5px 15px rgba(139, 95, 191, 0.4);
+}
+
+/* Efectos para las tech stack bubbles optimizados */
+.tech-bubble {
+  position: relative;
+  transition: all 0.3s ease;
+  cursor: default;
+  contain: layout;
+  transform: translate3d(0, 0, 0);
+}
+
+.tech-bubble:hover {
+  transform: translateY(-2px) translate3d(0, 0, 0);
+  box-shadow: 0 5px 15px rgba(139, 95, 191, 0.3);
+}
+
+.tech-bubble::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  background: linear-gradient(45deg, transparent, rgba(139, 95, 191, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tech-bubble:hover::before {
+  opacity: 1;
+}
+
+/* Scrollbar personalizado con tema cyber optimizado */
 ::-webkit-scrollbar {
   width: 12px;
 }
@@ -440,29 +479,13 @@ nav::after {
   color: white;
 }
 
-/* Loading animation mejorada */
-.loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 3px solid rgba(139, 95, 191, 0.3);
-  border-top: 3px solid var(--primary-purple);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  box-shadow: 0 0 20px rgba(139, 95, 191, 0.3);
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 /* Efectos de enfoque mejorados */
 input:focus, textarea:focus, button:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(139, 95, 191, 0.5);
 }
 
-/* Clases utilitarias para animaciones */
+/* Clases utilitarias para animaciones optimizadas */
 .fade-in {
   animation: fade-in 0.6s ease-out;
 }
@@ -479,113 +502,42 @@ input:focus, textarea:focus, button:focus {
   animation: glow 2s ease-in-out infinite alternate;
 }
 
-.pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-/* Responsive design mejorado */
+/* Optimización para dispositivos móviles */
 @media (max-width: 768px) {
   body {
     background-size: 30px 30px, 30px 30px, 100% 100%;
   }
   
-  .floating-orb {
-    display: none; /* Ocultar orbs en móviles para mejor rendimiento */
+  /* Reducir efectos en móviles para mejor rendimiento */
+  .animate-pulse,
+  .animate-bounce,
+  .animate-spin {
+    animation-duration: 2s;
   }
   
-  .hero-illustration::after {
-    animation-duration: 15s; /* Ralentizar animaciones en móviles */
+  .project-card:hover {
+    transform: translateY(-4px) scale(1.01) translate3d(0, 0, 0);
   }
 }
 
-/* Efectos especiales para la sección hero */
-.hero-bg-effects {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.cyber-grid {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    linear-gradient(rgba(139, 95, 191, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(139, 95, 191, 0.05) 1px, transparent 1px);
-  background-size: 100px 100px;
-  animation: grid-move 20s linear infinite;
-}
-
-@keyframes grid-move {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(100px, 100px);
-  }
-}
-
-/* Efectos para las redes sociales */
-.social-icon {
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-.social-icon::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: radial-gradient(circle, rgba(139, 95, 191, 0.3), transparent);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: all 0.3s ease;
-  z-index: -1;
-}
-
-.social-icon:hover::before {
-  width: 150%;
-  height: 150%;
-}
-
-.social-icon:hover {
-  transform: translateY(-2px) scale(1.1);
-  box-shadow: 0 5px 15px rgba(139, 95, 191, 0.4);
-}
-
-/* Efectos para las tech stack bubbles */
-.tech-bubble {
-  position: relative;
-  transition: all 0.3s ease;
-  cursor: default;
-}
-
-.tech-bubble:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(139, 95, 191, 0.3);
-}
-
-.tech-bubble::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: inherit;
-  background: linear-gradient(45deg, transparent, rgba(139, 95, 191, 0.1), transparent);
+/* Optimización para lazy loading de imágenes */
+img[loading="lazy"] {
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s;
 }
 
-.tech-bubble:hover::before {
+img[loading="lazy"].loaded {
   opacity: 1;
+}
+
+/* Optimización para elementos que están fuera de viewport */
+.offscreen {
+  transform: translate3d(0, 50px, 0);
+  opacity: 0;
+}
+
+.onscreen {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  transition: all 0.6s ease-out;
 }

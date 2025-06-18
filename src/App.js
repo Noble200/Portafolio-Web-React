@@ -1,237 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import React, { useState, useEffect, useCallback, useMemo, memo, lazy, Suspense } from 'react';
 import './App.css';
-
-// Importa tus componentes existentes
 import Login from './components/Login';
 import AdminPanel from './components/AdminPanel';
 
-const App = () => {
-  const [user, setUser] = useState(null);
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
-  const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState('home');
-  const [isScrolled, setIsScrolled] = useState(false);
+// Lazy load de la animación Lottie (mejora carga inicial)
+const DotLottieReact = lazy(() => 
+  import('@lottiefiles/dotlottie-react').then(module => ({ 
+    default: module.DotLottieReact 
+  }))
+);
 
-  // Estado para datos editables desde admin panel - INTEGRADO CON TU SISTEMA
-  const [siteConfig, setSiteConfig] = useState({
-    // Navegación
-    siteName: 'Ekizr',
-    
-    // Hero Section - Todo editable desde admin
-    heroContent: {
-      badge: 'Ready to Innovate',
-      title: 'Frontend',
-      subtitle: 'Developer',
-      profession: 'Network & Telecom Student',
-      description: 'Menciptakan Website Yang Inovatif, Fungsional, dan User-Friendly untuk Solusi Digital.',
-      techStack: ['React', 'Javascript', 'Node.js', 'Tailwind'],
-      buttonText1: 'Projects',
-      buttonText2: 'Contact',
-      // Redes sociales - solo aparecen las que tengan URL
-      socialNetworks: {
-        github: '',
-        linkedin: '',
-        twitter: '',
-        instagram: '',
-        facebook: '',
-        youtube: '',
-        behance: '',
-        dribbble: ''
-      }
-    },
-    
-    // About Section
-    aboutContent: {
-      subtitle: 'Transforming ideas into digital experiences',
-      name: 'Eki Zulfar Rachman',
-      description: 'Seorang lulusan Teknik Jaringan Komputer dan Telekomunikasi yang memiliki ketertarikan besar dalam pengembangan Front-End. Saya berfokus pada menciptakan pengalaman digital yang menarik dan selalu berusaha memberikan solusi terbaik dalam setiap proyek yang saya kerjakan.',
-      profileImage: null,
-      cvButtonText: 'Download CV',
-      projectsButtonText: 'View Projects',
-      stats: {
-        projects: { count: 13, subtitle: 'Innovative web solutions crafted' },
-        certificates: { count: 7, subtitle: 'Professional skills validated' },
-        experience: { count: 3, subtitle: 'Continuous learning journey' }
-      }
-    },
-    
-    // Portfolio Section - Se llena desde tu base de datos
-    portfolioContent: {
-      description: 'Explore my journey through projects, certifications, and technical expertise. Each section represents a milestone in my continuous learning path.',
-      projects: [] // Esto se carga desde tu API /api/projects
-    },
-
-    // Contact Section
-    contactContent: {
-      title: 'Contact Me',
-      subtitle: 'Got a question? Send me a message, and I\'ll get back to you soon.',
-      formTitle: 'Get in Touch',
-      formSubtitle: 'Have something to discuss? Send me a message and let\'s talk.',
-      email: 'hello@example.com',
-      phone: '+1234567890',
-      location: 'Your City, Country'
-    }
-  });
-
-  // Verifica autenticación al cargar
-  useEffect(() => {
-    const checkAuth = () => {
-      const userData = localStorage.getItem('user');
-      if (userData) {
-        try {
-          setUser(JSON.parse(userData));
-        } catch (error) {
-          localStorage.removeItem('user');
-        }
-      }
-      setLoading(false);
-    };
-
-    checkAuth();
-  }, []);
-
-  // Cargar datos del portafolio y configuración
-  useEffect(() => {
-    const loadPortfolioData = async () => {
-      try {
-        // Cargar proyectos desde tu API
-        const projectsResponse = await fetch('/api/projects?status=published');
-        if (projectsResponse.ok) {
-          const projects = await projectsResponse.json();
-          setSiteConfig(prev => ({
-            ...prev,
-            portfolioContent: {
-              ...prev.portfolioContent,
-              projects: projects
-            }
-          }));
-        }
-
-        // Cargar configuración desde tu API
-        const configResponse = await fetch('/api/config');
-        if (configResponse.ok) {
-          const config = await configResponse.json();
-          
-          // Mapear la configuración de la base de datos al estado
-          const updatedConfig = { ...siteConfig };
-          
-          // Hero Content
-          if (config.hero_badge) updatedConfig.heroContent.badge = config.hero_badge;
-          if (config.hero_title) updatedConfig.heroContent.title = config.hero_title;
-          if (config.hero_subtitle) updatedConfig.heroContent.subtitle = config.hero_subtitle;
-          if (config.hero_profession) updatedConfig.heroContent.profession = config.hero_profession;
-          if (config.hero_description) updatedConfig.heroContent.description = config.hero_description;
-          if (config.hero_tech_stack) updatedConfig.heroContent.techStack = config.hero_tech_stack;
-          if (config.hero_button1) updatedConfig.heroContent.buttonText1 = config.hero_button1;
-          if (config.hero_button2) updatedConfig.heroContent.buttonText2 = config.hero_button2;
-          
-          // Redes sociales - asegurar que el objeto existe
-          if (!updatedConfig.heroContent.socialNetworks) {
-            updatedConfig.heroContent.socialNetworks = {};
-          }
-          
-          // Mapear cada red social
-          if (config.social_github) updatedConfig.heroContent.socialNetworks.github = config.social_github;
-          if (config.social_linkedin) updatedConfig.heroContent.socialNetworks.linkedin = config.social_linkedin;
-          if (config.social_twitter) updatedConfig.heroContent.socialNetworks.twitter = config.social_twitter;
-          if (config.social_instagram) updatedConfig.heroContent.socialNetworks.instagram = config.social_instagram;
-          if (config.social_facebook) updatedConfig.heroContent.socialNetworks.facebook = config.social_facebook;
-          if (config.social_youtube) updatedConfig.heroContent.socialNetworks.youtube = config.social_youtube;
-          if (config.social_behance) updatedConfig.heroContent.socialNetworks.behance = config.social_behance;
-          if (config.social_dribbble) updatedConfig.heroContent.socialNetworks.dribbble = config.social_dribbble;
-          
-          // Nombre del sitio
-          if (config.site_title) updatedConfig.siteName = config.site_title;
-          
-          setSiteConfig(updatedConfig);
-          
-          console.log('🔍 Configuración cargada:', updatedConfig.heroContent.socialNetworks);
-        }
-      } catch (error) {
-        console.error('Error loading portfolio data:', error);
-      }
-    };
-
-    loadPortfolioData();
-  }, []);
-
-  // Manejo del scroll para navegación fija y animaciones
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-      
-      // Detectar sección activa
-      const sections = ['home', 'about', 'portfolio', 'contact'];
-      const scrollPosition = window.scrollY + 100;
-      
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section);
-            break;
-          }
-        }
-      }
-
-      // Activar animaciones de scroll
-      const animateElements = document.querySelectorAll('.scroll-animate, .scroll-animate-left, .scroll-animate-right');
-      animateElements.forEach(element => {
-        const elementTop = element.getBoundingClientRect().top;
-        const elementVisible = 150;
-        
-        if (elementTop < window.innerHeight - elementVisible) {
-          element.classList.add('animate');
-        }
-      });
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    // Ejecutar una vez al cargar
-    handleScroll();
-    
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [loading]);
-
-  const handleLogin = (userData) => {
-    // Obtener el token del localStorage (donde Login.js lo guardó)
-    const token = localStorage.getItem('admin_token');
-    
-    // Crear objeto de usuario con el token incluido
-    const userWithToken = {
-      ...userData,
-      token: token
-    };
-    
-    setUser(userWithToken);
-    localStorage.setItem('user', JSON.stringify(userWithToken));
-    setCurrentPath('/admin');
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
-    window.history.pushState({}, '', '/');
-    setCurrentPath('/');
-  };
-
-  const navigateToSection = (section) => {
-    setActiveSection(section);
-    const element = document.getElementById(section);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const goToAdmin = () => {
-    setCurrentPath('/admin');
-    window.history.pushState({}, '', '/admin');
-  };
-
-  // Función para obtener icono SVG de red social
-  const getSocialIcon = (network) => {
+// Componente memorizado para redes sociales (evita re-renders innecesarios)
+const SocialNetworks = memo(({ socialNetworks }) => {
+  const getSocialIcon = useCallback((network) => {
     const iconProps = "w-5 h-5 fill-current";
     
     switch (network) {
@@ -290,7 +71,319 @@ const App = () => {
           </svg>
         );
     }
-  };
+  }, [socialNetworks]);
+
+  return (
+    <div className="flex gap-4 pt-4">
+      {Object.entries(socialNetworks)
+        .filter(([_, url]) => url && url.trim() !== '')
+        .map(([network, url], index) => (
+          <a
+            key={network}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-12 h-12 bg-[#1a1b2e]/60 border border-[#8b5fbf]/30 rounded-xl flex items-center justify-center backdrop-blur-sm hover:border-[#8b5fbf]/60 hover:scale-110 hover:bg-[#8b5fbf]/20 transition-all duration-300 social-icon text-gray-300 hover:text-white"
+            title={network.charAt(0).toUpperCase() + network.slice(1)}
+            style={{animationDelay: `${index * 0.1 + 0.5}s`}}
+          >
+            {getSocialIcon(network)}
+          </a>
+        ))}
+    </div>
+  );
+});
+
+// Componente memorizado para tech stack
+const TechStack = memo(({ techStack }) => (
+  <div className="flex flex-wrap gap-3">
+    {techStack.map((tech, index) => (
+      <span
+        key={index}
+        className="px-4 py-2 bg-[#1a1b2e]/60 border border-[#8b5fbf]/30 rounded-full text-sm font-medium text-gray-300 backdrop-blur-sm hover:border-[#8b5fbf]/60 hover:text-white transition-all duration-300 tech-bubble"
+        style={{animationDelay: `${index * 0.1}s`}}
+      >
+        {tech}
+      </span>
+    ))}
+  </div>
+));
+
+// Componente memorizado para proyecto individual
+const ProjectCard = memo(({ project, index }) => (
+  <div 
+    className="bg-[#1a1b2e]/60 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-[#8b5fbf]/30 transition-all duration-500 hover:scale-105 group project-card scroll-animate"
+    style={{animationDelay: `${index * 0.1}s`}}
+  >
+    <div className="h-64 bg-gradient-to-br from-[#8b5fbf]/20 to-[#6366f1]/20 flex items-center justify-center">
+      {project.image_url ? (
+        <img 
+          src={project.image_url} 
+          alt={project.title} 
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+      ) : (
+        <div className="text-6xl opacity-50">🎨</div>
+      )}
+    </div>
+    <div className="p-6">
+      <h3 className="text-xl font-bold mb-2 text-white group-hover:text-[#8b5fbf] transition-colors">
+        {project.title}
+      </h3>
+      <p className="text-gray-400 mb-4 line-clamp-3">
+        {project.description}
+      </p>
+      <div className="flex flex-wrap gap-2 mb-4">
+        {project.tags?.map((tag, tagIndex) => (
+          <span key={tagIndex} className="px-2 py-1 bg-[#8b5fbf]/20 text-[#8b5fbf] rounded text-sm">
+            {tag}
+          </span>
+        ))}
+      </div>
+      <div className="flex gap-2">
+        {project.live_url && (
+          <a href={project.live_url} target="_blank" rel="noopener noreferrer" 
+             className="flex-1 py-2 bg-[#8b5fbf] text-white rounded text-center hover:bg-[#7a4fb5] transition-colors">
+            Ver Demo
+          </a>
+        )}
+        {project.download_url && (
+          <a href={project.download_url} target="_blank" rel="noopener noreferrer"
+             className="flex-1 py-2 bg-[#1a1b2e] border border-[#8b5fbf]/30 text-white rounded text-center hover:border-[#8b5fbf]/60 transition-colors">
+            Descargar
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+));
+
+const App = () => {
+  const [user, setUser] = useState(null);
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const [loading, setLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState('home');
+  const [isScrolled, setIsScrolled] = useState(false);
+  
+  // Estado optimizado con useMemo para configuración inicial
+  const initialConfig = useMemo(() => ({
+    siteName: 'Ekizr',
+    heroContent: {
+      badge: 'Ready to Innovate',
+      title: 'Frontend',
+      subtitle: 'Developer',
+      profession: 'Network & Telecom Student',
+      description: 'Menciptakan Website Yang Inovatif, Fungsional, dan User-Friendly untuk Solusi Digital.',
+      techStack: ['React', 'Javascript', 'Node.js', 'Tailwind'],
+      buttonText1: 'Projects',
+      buttonText2: 'Contact',
+      socialNetworks: {
+        github: '',
+        linkedin: '',
+        twitter: '',
+        instagram: '',
+        facebook: '',
+        youtube: '',
+        behance: '',
+        dribbble: ''
+      }
+    },
+    aboutContent: {
+      subtitle: 'Transforming ideas into digital experiences',
+      name: 'Eki Zulfar Rachman',
+      description: 'Seorang lulusan Teknik Jaringan Komputer dan Telekomunikasi yang memiliki ketertarikan besar dalam pengembangan Front-End. Saya berfokus pada menciptakan pengalaman digital yang menarik dan selalu berusaha memberikan solusi terbaik dalam setiap proyek yang saya kerjakan.',
+      profileImage: null,
+      cvButtonText: 'Download CV',
+      projectsButtonText: 'View Projects',
+      stats: {
+        projects: { count: 13, subtitle: 'Innovative web solutions crafted' },
+        certificates: { count: 7, subtitle: 'Professional skills validated' },
+        experience: { count: 3, subtitle: 'Continuous learning journey' }
+      }
+    },
+    portfolioContent: {
+      description: 'Explore my journey through projects, certifications, and technical expertise. Each section represents a milestone in my continuous learning path.',
+      projects: []
+    },
+    contactContent: {
+      title: 'Contact Me',
+      subtitle: 'Got a question? Send me a message, and I\'ll get back to you soon.',
+      formTitle: 'Get in Touch',
+      formSubtitle: 'Have something to discuss? Send me a message and let\'s talk.',
+      email: 'hello@example.com',
+      phone: '+1234567890',
+      location: 'Your City, Country'
+    }
+  }), []);
+
+  const [siteConfig, setSiteConfig] = useState(initialConfig);
+
+  // Verifica autenticación al cargar
+  useEffect(() => {
+    const checkAuth = () => {
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        try {
+          setUser(JSON.parse(userData));
+        } catch (error) {
+          localStorage.removeItem('user');
+        }
+      }
+      setLoading(false);
+    };
+
+    checkAuth();
+  }, []);
+
+  // NUEVA FUNCIÓN: Recarga la configuración desde la base de datos
+  const refreshConfiguration = useCallback(async () => {
+    try {
+      console.log('🔄 Recargando configuración...');
+      
+      const [projectsResponse, configResponse] = await Promise.all([
+        fetch('/api/projects?status=published'),
+        fetch('/api/config')
+      ]);
+
+      if (projectsResponse.ok) {
+        const projects = await projectsResponse.json();
+        setSiteConfig(prev => ({
+          ...prev,
+          portfolioContent: {
+            ...prev.portfolioContent,
+            projects: projects
+          }
+        }));
+      }
+
+      if (configResponse.ok) {
+        const config = await configResponse.json();
+        
+        setSiteConfig(prev => {
+          const updatedConfig = { ...prev };
+          
+          // Hero Content
+          if (config.hero_badge) updatedConfig.heroContent.badge = config.hero_badge;
+          if (config.hero_title) updatedConfig.heroContent.title = config.hero_title;
+          if (config.hero_subtitle) updatedConfig.heroContent.subtitle = config.hero_subtitle;
+          if (config.hero_profession) updatedConfig.heroContent.profession = config.hero_profession;
+          if (config.hero_description) updatedConfig.heroContent.description = config.hero_description;
+          if (config.hero_tech_stack) updatedConfig.heroContent.techStack = config.hero_tech_stack;
+          if (config.hero_button1) updatedConfig.heroContent.buttonText1 = config.hero_button1;
+          if (config.hero_button2) updatedConfig.heroContent.buttonText2 = config.hero_button2;
+          
+          // IMPORTANTE: Crear un nuevo objeto para socialNetworks para forzar re-render
+          updatedConfig.heroContent.socialNetworks = {
+            github: config.social_github || '',
+            linkedin: config.social_linkedin || '',
+            twitter: config.social_twitter || '',
+            instagram: config.social_instagram || '',
+            facebook: config.social_facebook || '',
+            youtube: config.social_youtube || '',
+            behance: config.social_behance || '',
+            dribbble: config.social_dribbble || ''
+          };
+          
+          if (config.site_title) updatedConfig.siteName = config.site_title;
+          
+          console.log('✅ Configuración actualizada:', updatedConfig.heroContent.socialNetworks);
+          return updatedConfig;
+        });
+      }
+    } catch (error) {
+      console.error('Error refreshing configuration:', error);
+    }
+  }, []);
+
+  // Optimización: useCallback para cargar datos
+  const loadPortfolioData = useCallback(async () => {
+    await refreshConfiguration();
+  }, [refreshConfiguration]);
+
+  // Cargar datos del portafolio y configuración
+  useEffect(() => {
+    loadPortfolioData();
+  }, [loadPortfolioData]);
+
+  // Optimización del scroll handler con throttling
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 50);
+          
+          // Detectar sección activa
+          const sections = ['home', 'about', 'portfolio', 'contact'];
+          const scrollPosition = window.scrollY + 100;
+          
+          for (const section of sections) {
+            const element = document.getElementById(section);
+            if (element) {
+              const { offsetTop, offsetHeight } = element;
+              if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+                setActiveSection(section);
+                break;
+              }
+            }
+          }
+
+          // Activar animaciones de scroll
+          const animateElements = document.querySelectorAll('.scroll-animate:not(.animate), .scroll-animate-left:not(.animate), .scroll-animate-right:not(.animate)');
+          animateElements.forEach(element => {
+            const elementTop = element.getBoundingClientRect().top;
+            const elementVisible = 150;
+            
+            if (elementTop < window.innerHeight - elementVisible) {
+              element.classList.add('animate');
+            }
+          });
+          
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loading]);
+
+  // Funciones memorizadas
+  const handleLogin = useCallback((userData) => {
+    const token = localStorage.getItem('admin_token');
+    const userWithToken = { ...userData, token: token };
+    setUser(userWithToken);
+    localStorage.setItem('user', JSON.stringify(userWithToken));
+    setCurrentPath('/admin');
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    setUser(null);
+    localStorage.removeItem('user');
+    window.history.pushState({}, '', '/');
+    setCurrentPath('/');
+  }, []);
+
+  const navigateToSection = useCallback((section) => {
+    setActiveSection(section);
+    const element = document.getElementById(section);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
+
+  const goToAdmin = useCallback(() => {
+    setCurrentPath('/admin');
+    window.history.pushState({}, '', '/admin');
+  }, []);
+
+  // Memoizar elementos que no cambian frecuentemente
+  const navigationItems = useMemo(() => ['Home', 'About', 'Portfolio', 'Contact'], []);
 
   // Loading screen
   if (loading) {
@@ -314,6 +407,7 @@ const App = () => {
         onLogout={handleLogout}
         siteConfig={siteConfig}
         setSiteConfig={setSiteConfig}
+        refreshConfiguration={refreshConfiguration} // PASAR LA FUNCIÓN AL ADMIN
       />
     ) : (
       <Login onLogin={handleLogin} />
@@ -330,14 +424,12 @@ const App = () => {
       }`}>
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo */}
             <div className="text-2xl font-bold bg-gradient-to-r from-[#8b5fbf] to-[#6366f1] bg-clip-text text-transparent">
               {siteConfig.siteName}
             </div>
             
-            {/* Menu */}
             <div className="hidden md:flex space-x-8">
-              {['Home', 'About', 'Portfolio', 'Contact'].map((item) => (
+              {navigationItems.map((item) => (
                 <button
                   key={item}
                   onClick={() => navigateToSection(item.toLowerCase())}
@@ -355,9 +447,9 @@ const App = () => {
         </div>
       </nav>
 
-      {/* Hero Section - Optimizado */}
+      {/* Hero Section */}
       <section id="home" className="min-h-screen flex items-center relative overflow-hidden">
-        {/* Fondo futurista optimizado - menos elementos */}
+        {/* Efectos de fondo */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-72 h-72 bg-[#8b5fbf]/8 rounded-full blur-3xl animate-pulse will-change-transform"></div>
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#6366f1]/8 rounded-full blur-3xl animate-pulse will-change-transform" style={{animationDelay: '1s'}}></div>
@@ -394,17 +486,7 @@ const App = () => {
               </p>
 
               {/* Tech Stack Bubbles */}
-              <div className="flex flex-wrap gap-3">
-                {siteConfig.heroContent.techStack.map((tech, index) => (
-                  <span
-                    key={index}
-                    className="px-4 py-2 bg-[#1a1b2e]/60 border border-[#8b5fbf]/30 rounded-full text-sm font-medium text-gray-300 backdrop-blur-sm hover:border-[#8b5fbf]/60 hover:text-white transition-all duration-300 tech-bubble"
-                    style={{animationDelay: `${index * 0.1}s`}}
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
+              <TechStack techStack={siteConfig.heroContent.techStack} />
 
               {/* Botones de acción */}
               <div className="flex gap-4">
@@ -425,31 +507,17 @@ const App = () => {
                 </button>
               </div>
 
-              {/* Redes sociales con iconos SVG */}
-              <div className="flex gap-4 pt-4">
-                {Object.entries(siteConfig.heroContent.socialNetworks)
-                  .filter(([_, url]) => url && url.trim() !== '')
-                  .map(([network, url], index) => (
-                    <a
-                      key={network}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-12 h-12 bg-[#1a1b2e]/60 border border-[#8b5fbf]/30 rounded-xl flex items-center justify-center backdrop-blur-sm hover:border-[#8b5fbf]/60 hover:scale-110 hover:bg-[#8b5fbf]/20 transition-all duration-300 social-icon text-gray-300 hover:text-white"
-                      title={network.charAt(0).toUpperCase() + network.slice(1)}
-                      style={{animationDelay: `${index * 0.1 + 0.5}s`}}
-                    >
-                      {getSocialIcon(network)}
-                    </a>
-                  ))}
-              </div>
+              {/* Redes sociales - NOTA: key único fuerza re-render */}
+              <SocialNetworks 
+                key={JSON.stringify(siteConfig.heroContent.socialNetworks)} 
+                socialNetworks={siteConfig.heroContent.socialNetworks} 
+              />
             </div>
 
             {/* Animación Lottie derecha */}
             <div className="relative scroll-animate-right">
               {/* Fondo dinámico con formas geométricas */}
               <div className="absolute inset-0 overflow-hidden">
-                {/* Formas geométricas animadas */}
                 <div className="absolute top-10 right-10 w-32 h-32 bg-gradient-to-br from-[#8b5fbf]/20 to-[#6366f1]/20 rotate-45 animate-pulse blur-sm"></div>
                 <div className="absolute bottom-20 left-5 w-24 h-24 bg-gradient-to-tr from-[#6366f1]/15 to-[#8b5fbf]/15 rounded-full animate-bounce blur-sm" style={{animationDelay: '1s'}}></div>
                 <div className="absolute top-1/2 right-5 w-16 h-16 bg-gradient-to-r from-[#8b5fbf]/25 to-[#6366f1]/25 transform rotate-12 animate-spin blur-sm" style={{animationDuration: '8s'}}></div>
@@ -459,14 +527,20 @@ const App = () => {
                 <div className="absolute top-1/4 right-0 h-px w-full bg-gradient-to-r from-transparent via-[#6366f1]/20 to-transparent animate-pulse" style={{animationDelay: '2s'}}></div>
               </div>
               
-              {/* Animación Lottie sin recuadro - TAMAÑO AUMENTADO */}
+              {/* Animación Lottie */}
               <div className="relative z-10">
-                <DotLottieReact
-                  src="https://lottie.host/400cf03c-d0bb-4810-b3a7-438a32d89948/dKc1leyteP.lottie"
-                  loop
-                  autoplay
-                  className="w-full h-auto max-w-3xl mx-auto scale-125"
-                />
+                <Suspense fallback={
+                  <div className="w-full h-96 flex items-center justify-center">
+                    <div className="w-16 h-16 border-4 border-[#8b5fbf]/30 border-t-[#8b5fbf] rounded-full animate-spin"></div>
+                  </div>
+                }>
+                  <DotLottieReact
+                    src="https://lottie.host/400cf03c-d0bb-4810-b3a7-438a32d89948/dKc1leyteP.lottie"
+                    loop
+                    autoplay
+                    className="w-full h-auto max-w-3xl mx-auto scale-125"
+                  />
+                </Suspense>
               </div>
             </div>
           </div>
@@ -480,7 +554,7 @@ const App = () => {
         </div>
       </section>
 
-      {/* About Section - Con animaciones */}
+      {/* About Section */}
       <section id="about" className="py-20 relative">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16 scroll-animate">
@@ -500,7 +574,7 @@ const App = () => {
         </div>
       </section>
 
-      {/* Portfolio Section - Con animaciones */}
+      {/* Portfolio Section */}
       <section id="portfolio" className="py-20 bg-[#0f0f1f]/50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16 scroll-animate">
@@ -532,55 +606,14 @@ const App = () => {
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {siteConfig.portfolioContent.projects.map((project, index) => (
-                <div 
-                  key={index} 
-                  className="bg-[#1a1b2e]/60 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-[#8b5fbf]/30 transition-all duration-500 hover:scale-105 group project-card scroll-animate"
-                  style={{animationDelay: `${index * 0.1}s`}}
-                >
-                  <div className="h-64 bg-gradient-to-br from-[#8b5fbf]/20 to-[#6366f1]/20 flex items-center justify-center">
-                    {project.image_url ? (
-                      <img src={project.image_url} alt={project.title} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="text-6xl opacity-50">🎨</div>
-                    )}
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2 text-white group-hover:text-[#8b5fbf] transition-colors">
-                      {project.title}
-                    </h3>
-                    <p className="text-gray-400 mb-4 line-clamp-3">
-                      {project.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.tags?.map((tag, tagIndex) => (
-                        <span key={tagIndex} className="px-2 py-1 bg-[#8b5fbf]/20 text-[#8b5fbf] rounded text-sm">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="flex gap-2">
-                      {project.live_url && (
-                        <a href={project.live_url} target="_blank" rel="noopener noreferrer" 
-                           className="flex-1 py-2 bg-[#8b5fbf] text-white rounded text-center hover:bg-[#7a4fb5] transition-colors">
-                          Ver Demo
-                        </a>
-                      )}
-                      {project.download_url && (
-                        <a href={project.download_url} target="_blank" rel="noopener noreferrer"
-                           className="flex-1 py-2 bg-[#1a1b2e] border border-[#8b5fbf]/30 text-white rounded text-center hover:border-[#8b5fbf]/60 transition-colors">
-                          Descargar
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <ProjectCard key={project.id || index} project={project} index={index} />
               ))}
             </div>
           )}
         </div>
       </section>
 
-      {/* Contact Section - Con animaciones */}
+      {/* Contact Section */}
       <section id="contact" className="py-20">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16 scroll-animate">

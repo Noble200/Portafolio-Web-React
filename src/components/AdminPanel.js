@@ -134,7 +134,10 @@ const AdminPanel = ({ user, onLogout, siteConfig, setSiteConfig }) => {
       // Actualizar el estado local
       setSiteConfig(prev => ({
         ...prev,
-        heroContent: { ...heroData }
+        heroContent: {
+          ...prev.heroContent,
+          ...heroData
+        }
       }));
 
       showMessage('Configuración guardada correctamente', 'success');
@@ -155,6 +158,7 @@ const AdminPanel = ({ user, onLogout, siteConfig, setSiteConfig }) => {
       }
     }
     setLoading(false);
+    window.location.reload();
   };
 
   // Función para agregar tecnología
