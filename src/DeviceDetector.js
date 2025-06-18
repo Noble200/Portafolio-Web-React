@@ -30,7 +30,7 @@ const DeviceDetector = () => {
       
       setIsMobile(mobileDetected);
       
-      // Debug info en desarrollo
+      // Debug info en desarrollo (solo en consola)
       if (process.env.NODE_ENV === 'development') {
         console.log('🔍 Device Detection:', {
           detected: mobileDetected ? 'MOBILE' : 'DESKTOP',
@@ -69,22 +69,15 @@ const DeviceDetector = () => {
             Ekizr
           </div>
           <div className="w-8 h-8 border-4 border-[#8b5fbf]/30 border-t-[#8b5fbf] rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400 text-sm">Detecting device...</p>
+          <p className="text-gray-400 text-sm">Cargando...</p>
         </div>
       </div>
     );
   }
 
-  // Renderizar componente según dispositivo
+  // Renderizar componente según dispositivo (sin indicador visual)
   return (
     <div>
-      {/* Indicador de versión en desarrollo */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-0 right-0 z-[9999] bg-[#8b5fbf] text-white px-3 py-1 text-xs font-bold">
-          {isMobile ? '📱 MOBILE' : '🖥️ DESKTOP'}
-        </div>
-      )}
-      
       {/* Renderizar componente correspondiente */}
       {isMobile ? <AppMobile /> : <App />}
     </div>

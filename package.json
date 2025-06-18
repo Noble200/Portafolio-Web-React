@@ -13,10 +13,24 @@
     "eject": "react-scripts eject",
     "railway:build": "npm install && npm run build",
     "railway:start": "npm start",
-    "dev:server": "NODE_ENV=development node server/app.js",
-    "dev:client": "react-scripts start"
+    "dev:server": "NODE_ENV=development nodemon server/app.js",
+    "dev:client": "react-scripts start",
+    
+    "_comment": "Scripts para gestión de base de datos y configuración",
+    "db:init": "node scripts/initDatabase.js",
+    "db:seed": "node scripts/updateHeroConfig.js",
+    "config:show": "node scripts/updateHeroConfig.js show",
+    "config:hero": "node scripts/updateHeroConfig.js",
+    "admin:password": "node scripts/initDatabase.js",
+    
+    "_comment2": "Scripts de utilidad",
+    "setup": "npm install && npm run db:init && npm run config:hero",
+    "reset:config": "npm run config:hero",
+    "health": "curl http://localhost:3000/api/health || echo 'Servidor no disponible'",
+    "logs": "npm run dev:server"
   },
   "dependencies": {
+    "@lottiefiles/dotlottie-react": "^0.6.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
