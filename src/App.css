@@ -133,102 +133,22 @@ body {
   background: linear-gradient(90deg, transparent, rgba(139, 95, 191, 0.8), transparent);
 }
 
-/* NAVBAR CYBER ANIMATION - Única y futurista */
-.navbar-cyber-scrolled {
-  position: relative;
+/* Navegación con efectos cyber optimizados */
+nav {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-top: 2px solid transparent;
-  border-bottom: 2px solid transparent;
-  background: 
-    linear-gradient(rgba(10, 11, 30, 0.95), rgba(10, 11, 30, 0.95)) padding-box,
-    linear-gradient(90deg, 
-      rgba(139, 95, 191, 0.6) 0%,
-      rgba(0, 212, 255, 0.8) 50%,
-      rgba(139, 95, 191, 0.6) 100%
-    ) border-box;
-  animation: cyber-navbar-glow 3s ease-in-out infinite alternate;
+  position: relative;
+  contain: layout style;
 }
 
-/* Línea escaneando superior */
-.navbar-cyber-scrolled::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 40%;
-  height: 2px;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(0, 212, 255, 1), 
-    rgba(255, 255, 255, 0.8),
-    rgba(0, 212, 255, 1),
-    transparent
-  );
-  animation: cyber-scan 2.5s ease-in-out infinite;
-  z-index: 10;
-}
-
-/* Pulso inferior */
-.navbar-cyber-scrolled::after {
+nav::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(139, 95, 191, 0.4) 20%, 
-    rgba(0, 212, 255, 0.9) 50%, 
-    rgba(139, 95, 191, 0.4) 80%, 
-    transparent 100%
-  );
-  animation: cyber-pulse 2s ease-in-out infinite;
-  z-index: 10;
-}
-
-/* Animaciones del navbar */
-@keyframes cyber-navbar-glow {
-  0% {
-    box-shadow: 
-      0 0 15px rgba(139, 95, 191, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
-  100% {
-    box-shadow: 
-      0 0 25px rgba(139, 95, 191, 0.2),
-      0 0 40px rgba(0, 212, 255, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  }
-}
-
-@keyframes cyber-scan {
-  0% {
-    left: -40%;
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    left: 100%;
-    opacity: 0;
-  }
-}
-
-@keyframes cyber-pulse {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scaleX(0.9);
-  }
-  50% {
-    opacity: 1;
-    transform: scaleX(1);
-  }
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(139, 95, 191, 0.3), transparent);
 }
 
 /* Botones con efectos futuristas optimizados */
@@ -527,65 +447,25 @@ body {
   opacity: 1;
 }
 
-/* MEJORAMIENTO SCROLLBAR - Scrollbar personalizado con tema cyber optimizado MEJORADO */
+/* Scrollbar personalizado con tema cyber optimizado */
 ::-webkit-scrollbar {
-  width: 16px;
+  width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(10, 11, 30, 0.9);
-  border-radius: 8px;
-  border: 1px solid rgba(139, 95, 191, 0.1);
-  box-shadow: inset 0 0 6px rgba(139, 95, 191, 0.1);
+  background: rgba(26, 27, 46, 0.3);
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, 
-    rgba(139, 95, 191, 0.9) 0%,
-    rgba(99, 102, 241, 0.8) 50%,
-    rgba(0, 212, 255, 0.7) 100%
-  );
-  border-radius: 8px;
-  border: 2px solid rgba(10, 11, 30, 0.5);
-  box-shadow: 
-    0 0 10px rgba(139, 95, 191, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, var(--primary-purple), var(--secondary-blue));
+  border-radius: 6px;
+  border: 2px solid rgba(26, 27, 46, 0.3);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, 
-    rgba(139, 95, 191, 1) 0%,
-    rgba(99, 102, 241, 0.9) 50%,
-    rgba(0, 212, 255, 0.8) 100%
-  );
-  box-shadow: 
-    0 0 20px rgba(139, 95, 191, 0.6),
-    0 0 30px rgba(139, 95, 191, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  border-color: rgba(139, 95, 191, 0.3);
-}
-
-::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(180deg, 
-    rgba(0, 212, 255, 1) 0%,
-    rgba(139, 95, 191, 0.9) 50%,
-    rgba(99, 102, 241, 0.8) 100%
-  );
-  box-shadow: 
-    0 0 25px rgba(0, 212, 255, 0.8),
-    0 0 40px rgba(139, 95, 191, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-/* Corners del scrollbar */
-::-webkit-scrollbar-corner {
-  background: rgba(10, 11, 30, 0.9);
-}
-
-/* Scrollbar para Firefox */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(139, 95, 191, 0.8) rgba(10, 11, 30, 0.9);
+  background: linear-gradient(180deg, var(--secondary-blue), var(--accent-cyan));
+  box-shadow: 0 0 10px rgba(139, 95, 191, 0.5);
 }
 
 /* Efectos de selección de texto */
