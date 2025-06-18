@@ -419,7 +419,7 @@ const App = () => {
       {/* Navigation */}
       <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${
         isScrolled 
-          ? 'bg-[#0a0b1e]/90 backdrop-blur-xl border-b border-[#8b5fbf]/20 shadow-lg' 
+          ? 'navbar-cyber-scrolled bg-[#0a0b1e]/90 shadow-lg' 
           : 'bg-transparent'
       }`}>
         <div className="container mx-auto px-6 py-4">
